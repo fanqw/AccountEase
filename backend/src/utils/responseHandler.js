@@ -1,5 +1,5 @@
-function sendResponse(res, code, data, message) {
-  return res.status(code).json({ data, message });
+function sendResponse(res, code, message) {
+  return res.status(code).json({ message });
 }
 
 module.exports = { sendResponse };

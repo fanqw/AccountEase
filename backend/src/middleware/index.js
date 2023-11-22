@@ -23,7 +23,6 @@ function applyMiddleware(app) {
   app.use(sessionMiddleware);
   app.use(passport.initialize());
   app.use(passport.session());
-
 }
 
 module.exports = applyMiddleware;
