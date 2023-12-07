@@ -1,5 +1,6 @@
 // 自动加载 .env 文件
 require('dotenv').config();
+require('module-alias/register')
 
 const express = require('express');
 const applyMiddle = require('./src/middleware')

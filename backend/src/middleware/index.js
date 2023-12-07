@@ -11,6 +11,7 @@ const {
   sessionMiddleware,
 } = require('./cookieSession');
 const passport = require('./passport');
+const authenticateToken = require('./jwt');
 
 function applyMiddleware(app) {
   app.use(loggerMiddleware(process.env.NODE_ENV));
@@ -23,6 +24,7 @@ function applyMiddleware(app) {
   app.use(sessionMiddleware);
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(authenticateToken)
 }
 
 module.exports = applyMiddleware;
