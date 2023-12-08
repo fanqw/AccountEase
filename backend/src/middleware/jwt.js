@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { sendResponse } = require('@/utils/responseHandler')
 
 const secretKey = process.env.SECRET_KEY;
 
@@ -17,21 +16,20 @@ const authenticateToken = (req, res, next) => {
 
   // 获取名为 Cookie 中存储的 token 
   const token = req.cookies.token;
-  const response = {
-    code: 200,
-    data: null,
-    msg: '',
-  }
   if (!token) {
-    response.code = 401;
-    response.msg = 'Authentication failed';
-    return sendResponse(response)
+    return res.status(401).json({
+      code: -1,
+      data: null,
+      msg: 'Authentication failed'
+    })
   }
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
-      response.code = 403;
-      response.msg = 'Token verification failed';
-      return sendResponse(response)
+      return res.status(403).json({
+        code: -1,
+        data: null,
+        msg: 'Token verification failed'
+      })
     }
     req.user = decoded; // 将解码后的用户信息存储到 req 对象中
     next();

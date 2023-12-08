@@ -1,9 +1,9 @@
 const authRoutes = require('./authRoutes');
-// 还可以导入其他的路由文件
+const marketRoutes = require('./marketRoutes');
 
 function loadRoutes(app) {
   app.use('/api/auth', authRoutes);
-  // 在这里挂载其他路由
+  app.use('/api/market', marketRoutes);
 }
 
 module.exports = loadRoutes;

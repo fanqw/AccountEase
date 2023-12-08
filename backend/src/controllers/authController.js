@@ -1,51 +1,46 @@
 const bcrypt = require('bcryptjs');
 const User = require('@/models/user');
-const { sendResponse } = require('@/utils/responseHandler')
 const { generateToken } = require('@/utils/jwt')
 
 // 注册新用户
 async function registerUser(req, res) {
   const { username, password } = req.body;
-  const response = {
-    res,
-    code: 200,
-    data: null,
-    msg: '',
-  }
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      response.code = 400;
-      response.msg = "用户名已存在";
-      return sendResponse(response)
+      return res.status(200).json({
+        code: -1,
+        data: null,
+        msg: '用户名已存在'
+      })
     }
-
     const newUser = new User({ username, password });
     await newUser.save();
-    response.data = newUser._id;
-    sendResponse(response)
+    res.status(200).json({
+      code: 0,
+      data: newUser._id,
+      msg: ''
+    })
   } catch (error) {
-    response.code = 500;
-    response.msg = error.message;
-    sendResponse(response)
+    res.status(500).json({
+      code: -1,
+      data: null,
+      msg: error.message
+    })
   }
 }
 
 // 登录
 async function login(req, res) {
   const { username, password } = req.body;
-  const response = {
-    res,
-    code: 200,
-    data: null,
-    msg: '',
-  }
   try {
     const user = await User.findOne({ username })
     if (!user) {
-      response.code = 400;
-      response.msg = 'Invalid username or password';
-      return sendResponse(response)
+      return res.status(200).json({
+        code: -1,
+        data: null,
+        msg: 'Invalid username or password'
+      })
     }
     const result = await bcrypt.compare(password, user.password)
     if (result) {
@@ -62,26 +57,32 @@ async function login(req, res) {
         // domain: 'yourdomain.com', // 设置 Cookie 的域
         expires: new Date(Date.now() + 12 * 60 * 60 * 1000), // 设置过期时间
       });
-      response.msg = 'Login successful';
-      return sendResponse(response)
+      return res.status(200).json({
+        code: 0,
+        data: token,
+        msg: 'Login successful'
+      })
     } else {
-      response.code = 401;
-      response.msg = 'Invalid username or password';
-      return sendResponse(response)
+      return res.status(200).json({
+        code: -1,
+        data: null,
+        msg: 'Invalid username or password'
+      })
     }
   } catch (error) {
-    response.code = 500;
-    response.msg = error.message;
-    return sendResponse(response)
+    return res.status(500).json({
+      code: -1,
+      data: null,
+      msg: error.message
+    })
   }
 }
 
 // 登出
 async function logout(req, res) {
   res.cookie('token', '', { expires: new Date(0) });
-  sendResponse({
-    res,
-    code: 200,
+  res.status(200).json({
+    code: 0,
     data: null,
     msg: 'Logged out successfully'
   })
